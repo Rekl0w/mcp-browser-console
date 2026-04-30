@@ -4,15 +4,44 @@
   "description": "MCP server that exposes browser console, error, and network events streamed from the MCP Browser Console Chrome Extension.",
   "type": "module",
   "license": "MIT",
+  "author": "Rekl0w",
+  "homepage": "https://github.com/Rekl0w/mcp-browser-console#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rekl0w/mcp-browser-console.git",
+    "directory": "packages/server"
+  },
+  "bugs": {
+    "url": "https://github.com/Rekl0w/mcp-browser-console/issues"
+  },
   "keywords": [
     "mcp",
+    "mcp-server",
     "model-context-protocol",
     "chrome-extension",
     "browser-console",
+    "browser-logs",
+    "developer-tools",
+    "debugging",
+    "rekl0w",
     "websocket"
   ],
   "bin": {
     "mcp-browser-console": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./tools": {
+      "types": "./dist/tools.d.ts",
+      "import": "./dist/tools.js"
+    },
+    "./websocket": {
+      "types": "./dist/websocket.d.ts",
+      "import": "./dist/websocket.js"
+    }
   },
   "files": [
     "dist",
