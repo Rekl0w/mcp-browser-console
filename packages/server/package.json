@@ -1,6 +1,6 @@
 {
   "name": "mcp-browser-console",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "description": "MCP server that exposes browser console, error, and network events streamed from the MCP Browser Console Chrome Extension.",
   "type": "module",
   "license": "MIT",
