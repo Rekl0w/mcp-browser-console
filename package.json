@@ -1,6 +1,6 @@
 {
   "name": "mcp-browser-console-workspace",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Monorepo for a Chrome Extension and MCP server that streams browser console and network events to AI tools.",
   "license": "MIT",
