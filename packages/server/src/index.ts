@@ -11,7 +11,7 @@ import { browserConsoleTools, handleBrowserConsoleTool } from "./tools.js";
 import { BrowserEventHub } from "./websocket.js";
 
 const SERVER_NAME = "mcp-browser-console";
-const SERVER_VERSION = "0.1.0";
+const SERVER_VERSION = "0.1.1";
 const WEBSOCKET_PORT = 3712;
 const BUFFER_SIZE = 500;
 
