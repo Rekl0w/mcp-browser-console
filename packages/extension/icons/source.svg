@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-labelledby="title desc">
+  <title id="title">MCP Browser Console icon</title>
+  <desc id="desc">A rounded browser console window with MCP nodes on a blue-purple gradient.</desc>
+  <defs>
+    <linearGradient id="bg" x1="16" y1="12" x2="112" y2="116" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#2563eb" />
+      <stop offset="0.52" stop-color="#7c3aed" />
+      <stop offset="1" stop-color="#111827" />
+    </linearGradient>
+    <linearGradient id="screen" x1="28" y1="34" x2="100" y2="96" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#0f172a" />
+      <stop offset="1" stop-color="#020617" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" rx="28" fill="url(#bg)" />
+  <rect x="22" y="28" width="84" height="72" rx="14" fill="url(#screen)" stroke="#bfdbfe" stroke-width="5" />
+  <circle cx="38" cy="43" r="5" fill="#ef4444" />
+  <circle cx="53" cy="43" r="5" fill="#f59e0b" />
+  <circle cx="68" cy="43" r="5" fill="#22c55e" />
+  <path d="M38 65l12 10-12 10" fill="none" stroke="#93c5fd" stroke-width="8" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M60 86h28" fill="none" stroke="#c4b5fd" stroke-width="8" stroke-linecap="round" />
+  <circle cx="91" cy="65" r="7" fill="#38bdf8" />
+  <circle cx="79" cy="77" r="5" fill="#a78bfa" />
+  <path d="M87 69l-7 7" stroke="#e0f2fe" stroke-width="4" stroke-linecap="round" />
+</svg>

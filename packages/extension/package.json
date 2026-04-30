@@ -1,0 +1,18 @@
+{
+  "name": "@mcp-browser-console/extension",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Chrome Extension that captures browser console, error, fetch, and XHR events for mcp-browser-console.",
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "clean": "rimraf dist",
+    "dev": "vite build --watch",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "devDependencies": {
+    "@types/chrome": "0.1.40",
+    "@types/node": "25.6.0",
+    "vite": "8.0.10"
+  }
+}
