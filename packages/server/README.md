@@ -1,6 +1,6 @@
 # mcp-browser-console
 
-`mcp-browser-console` is the npm-publishable MCP server for the MCP Browser Console Chrome Extension. It listens for browser events on `ws://localhost:3712`, buffers the latest 500 events in memory, and exposes MCP tools over stdio.
+`@rekl0w/mcp-browser-console` is the npm-publishable MCP server for the MCP Browser Console Chrome Extension. It listens for browser events on `ws://localhost:3712`, buffers the latest 500 events in memory, and exposes MCP tools over stdio.
 
 ## MCP tools
 
@@ -16,7 +16,7 @@
   "mcpServers": {
     "browser-console": {
       "command": "npx",
-      "args": ["mcp-browser-console"]
+      "args": ["@rekl0w/mcp-browser-console"]
     }
   }
 }

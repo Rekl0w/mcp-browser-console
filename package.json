@@ -15,9 +15,9 @@
     "build": "node scripts/run-workspaces.mjs build",
     "clean": "node scripts/run-workspaces.mjs clean",
     "dev:extension": "node scripts/run-workspaces.mjs dev @mcp-browser-console/extension",
-    "dev:server": "node scripts/run-workspaces.mjs dev mcp-browser-console",
-    "pack:server": "npm pack --workspace mcp-browser-console",
-    "publish:server": "npm publish --workspace mcp-browser-console --access public",
+    "dev:server": "node scripts/run-workspaces.mjs dev @rekl0w/mcp-browser-console",
+    "pack:server": "npm pack --workspace @rekl0w/mcp-browser-console",
+    "publish:server": "npm publish --workspace @rekl0w/mcp-browser-console --access public",
     "test": "node scripts/test.mjs",
     "test:server": "node scripts/smoke-server.mjs",
     "typecheck": "node scripts/run-workspaces.mjs typecheck"

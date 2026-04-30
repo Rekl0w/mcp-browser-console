@@ -123,7 +123,7 @@ After publishing the server package to npm, MCP clients can launch it with:
   "mcpServers": {
     "browser-console": {
       "command": "npx",
-      "args": ["mcp-browser-console"]
+      "args": ["@rekl0w/mcp-browser-console"]
     }
   }
 }
