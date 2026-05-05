@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
 
 await runNodeScript("scripts/run-workspaces.mjs", ["build"]);
+await runNodeScript("scripts/smoke-extension-background.mjs", []);
 await runNodeScript("scripts/smoke-server.mjs", []);
 
 function runNodeScript(scriptPath, args) {

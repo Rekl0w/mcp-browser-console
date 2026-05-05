@@ -74,13 +74,16 @@ let lastError: string | undefined;
 const pendingEvents: CapturedEvent[] = [];
 const activeTabIds = new Set<number>();
 
+void refreshActiveTabs();
 connectWebSocket();
 
 chrome.runtime.onInstalled.addListener(() => {
+  void refreshActiveTabsAndSendStatus();
   connectWebSocket();
 });
 
 chrome.runtime.onStartup.addListener(() => {
+  void refreshActiveTabsAndSendStatus();
   connectWebSocket();
 });
 
@@ -100,13 +103,30 @@ chrome.runtime.onMessage.addListener(
     }
 
     if (isStatusRequestMessage(message)) {
-      sendResponse(getPopupStatus());
-      return false;
+      void refreshActiveTabs()
+        .catch((error: unknown) => {
+          lastError = `Unable to read browser tabs: ${getErrorMessage(error)}`;
+        })
+        .finally(() => {
+          sendResponse(getPopupStatus());
+        });
+      return true;
     }
 
     return false;
   },
 );
+
+chrome.tabs.onCreated.addListener((tab) => {
+  trackTab(tab);
+  sendClientStatus();
+});
+
+chrome.tabs.onUpdated.addListener((tabId, _changeInfo, tab) => {
+  activeTabIds.add(tabId);
+  trackTab(tab);
+  sendClientStatus();
+});
 
 chrome.tabs.onRemoved.addListener((tabId) => {
   activeTabIds.delete(tabId);
@@ -131,7 +151,7 @@ function connectWebSocket(): void {
     lastConnectedAt = Date.now();
     lastError = undefined;
     flushPendingEvents();
-    sendClientStatus();
+    void refreshActiveTabsAndSendStatus();
     startStatusTimer();
   });
 
@@ -197,6 +217,51 @@ function sendClientStatus(): void {
   socket.send(JSON.stringify(statusMessage));
 }
 
+async function refreshActiveTabs(): Promise<void> {
+  const tabs = await queryTabs();
+
+  activeTabIds.clear();
+
+  for (const tab of tabs) {
+    trackTab(tab);
+  }
+}
+
+async function refreshActiveTabsAndSendStatus(): Promise<void> {
+  try {
+    await refreshActiveTabs();
+  } catch (error) {
+    lastError = `Unable to read browser tabs: ${getErrorMessage(error)}`;
+  }
+
+  sendClientStatus();
+}
+
+function queryTabs(): Promise<chrome.tabs.Tab[]> {
+  return new Promise((resolve, reject) => {
+    try {
+      chrome.tabs.query({}, (tabs) => {
+        const error = chrome.runtime.lastError;
+
+        if (error?.message) {
+          reject(new Error(error.message));
+          return;
+        }
+
+        resolve(tabs);
+      });
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
+
+function trackTab(tab: chrome.tabs.Tab): void {
+  if (typeof tab.id === "number") {
+    activeTabIds.add(tab.id);
+  }
+}
+
 function scheduleReconnect(): void {
   if (reconnectTimer !== undefined) {
     return;
@@ -226,7 +291,7 @@ function clearReconnectTimer(): void {
 function startStatusTimer(): void {
   stopStatusTimer();
   statusTimer = self.setInterval(() => {
-    sendClientStatus();
+    void refreshActiveTabsAndSendStatus();
   }, STATUS_FLUSH_INTERVAL_MS);
 }
 
@@ -290,6 +355,10 @@ function addTabId(
     ...event,
     tabId,
   };
+}
+
+function getErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error);
 }
 
 function isRuntimeEventMessage(value: unknown): value is RuntimeEventMessage {
