@@ -7,6 +7,11 @@
 
 The extension streams to `ws://localhost:3712`. The server buffers the latest 500 events in memory and provides MCP tools for querying and clearing that buffer.
 
+## Quick links
+
+- Chrome Extension: [Install from the Chrome Web Store](https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke)
+- Source code, MCP server docs, and privacy policy: [github.com/Rekl0w/mcp-browser-console](https://github.com/Rekl0w/mcp-browser-console)
+
 ## Architecture
 
 ```text
@@ -104,15 +109,21 @@ bun run dev:server
 
 The server uses stdio for MCP protocol messages and opens a local WebSocket server on port `3712`.
 
-## Load the Chrome Extension
+## Install the Chrome Extension
+
+For normal use, install the extension from the Chrome Web Store:
+
+[https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke](https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke)
+
+The popup shows whether the background service worker is connected to the local MCP server.
+
+### Load the extension locally for development
 
 1. Build the workspace with `npm run build` or `bun run build`.
 2. Open `chrome://extensions`.
 3. Enable **Developer mode**.
 4. Click **Load unpacked**.
 5. Select `packages/extension/dist`.
-
-The popup shows whether the background service worker is connected to the local MCP server.
 
 ## MCP client configuration
 

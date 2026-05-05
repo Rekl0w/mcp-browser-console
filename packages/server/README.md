@@ -18,7 +18,8 @@ This npm package contains the **MCP server**. It receives browser console, error
 
 This server is designed to be used with the MCP Browser Console Chrome Extension from the same repository:
 
-[https://github.com/Rekl0w/mcp-browser-console](https://github.com/Rekl0w/mcp-browser-console)
+- Chrome Web Store: [https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke](https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke)
+- Repository: [https://github.com/Rekl0w/mcp-browser-console](https://github.com/Rekl0w/mcp-browser-console)
 
 The extension captures browser events and forwards them to this local MCP server. The server then makes those events available to MCP clients.
 
@@ -80,5 +81,6 @@ Because browser logs and network responses can contain sensitive information, tr
 ## Links
 
 - Repository: [github.com/Rekl0w/mcp-browser-console](https://github.com/Rekl0w/mcp-browser-console)
+- Chrome Web Store: [chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke](https://chromewebstore.google.com/detail/mcp-browser-console/gggjhfijcebjbfpmjemnjohnoglmhoke)
 - Issues: [github.com/Rekl0w/mcp-browser-console/issues](https://github.com/Rekl0w/mcp-browser-console/issues)
 - Privacy policy: [github.com/Rekl0w/mcp-browser-console/blob/main/PRIVACY.md](https://github.com/Rekl0w/mcp-browser-console/blob/main/PRIVACY.md)
