@@ -50,6 +50,7 @@ export default defineConfig({
       input: {
         background: resolve(packageRoot, "src/background.ts"),
         content: resolve(packageRoot, "src/content.ts"),
+        "content-bridge": resolve(packageRoot, "src/content-bridge.ts"),
         popup: resolve(packageRoot, "popup.html"),
       },
       output: {

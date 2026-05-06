@@ -26,23 +26,18 @@ interface CapturedEvent {
 
 interface PostedCapturedEvent {
   source: typeof SOURCE;
-  event: CapturedEvent;
-}
-
-interface RuntimeEventMessage {
-  kind: typeof RUNTIME_EVENT_KIND;
+  messageId: string;
   event: CapturedEvent;
 }
 
 declare global {
   interface Window {
     __MCP_BROWSER_CONSOLE_PAGE_HOOK_INSTALLED__?: boolean;
-    __MCP_BROWSER_CONSOLE_BRIDGE_INSTALLED__?: boolean;
   }
 }
 
 const SOURCE = "mcp-browser-console";
-const RUNTIME_EVENT_KIND = "mcp-browser-console-event";
+const CAPTURED_EVENT_DOM_EVENT = "mcp-browser-console-event";
 const CONSOLE_LEVELS = [
   "log",
   "warn",
@@ -57,52 +52,11 @@ const MAX_OBJECT_KEYS = 100;
 const MAX_COLLECTION_ITEMS = 100;
 const MAX_STRING_LENGTH = 50_000;
 const MAX_RESPONSE_BODY_LENGTH = 100_000;
+const PAGE_MARKER_ATTRIBUTE = "data-mcp-browser-console-page-hooks-installed";
 
-if (hasExtensionRuntime()) {
-  installBridge();
-} else {
-  installPageHooks();
-}
+let nextMessageId = 0;
 
-function hasExtensionRuntime(): boolean {
-  try {
-    return (
-      typeof chrome !== "undefined" &&
-      Boolean(chrome.runtime?.id) &&
-      typeof chrome.runtime.sendMessage === "function"
-    );
-  } catch {
-    return false;
-  }
-}
-
-function installBridge(): void {
-  if (window.__MCP_BROWSER_CONSOLE_BRIDGE_INSTALLED__) {
-    return;
-  }
-
-  window.__MCP_BROWSER_CONSOLE_BRIDGE_INSTALLED__ = true;
-
-  window.addEventListener(
-    "message",
-    (messageEvent: MessageEvent<unknown>) => {
-      // MAIN and ISOLATED worlds can expose different WindowProxy wrappers.
-      if (!isPostedCapturedEvent(messageEvent.data)) {
-        return;
-      }
-
-      const runtimeMessage: RuntimeEventMessage = {
-        kind: RUNTIME_EVENT_KIND,
-        event: messageEvent.data.event,
-      };
-
-      chrome.runtime.sendMessage(runtimeMessage, () => {
-        void chrome.runtime.lastError;
-      });
-    },
-    false,
-  );
-}
+installPageHooks();
 
 function installPageHooks(): void {
   if (window.__MCP_BROWSER_CONSOLE_PAGE_HOOK_INSTALLED__) {
@@ -110,6 +64,7 @@ function installPageHooks(): void {
   }
 
   window.__MCP_BROWSER_CONSOLE_PAGE_HOOK_INSTALLED__ = true;
+  setDocumentMarker(PAGE_MARKER_ATTRIBUTE);
 
   patchConsole();
   patchGlobalErrors();
@@ -393,12 +348,21 @@ function emitEvent(
 ): void {
   const payload: PostedCapturedEvent = {
     source: SOURCE,
+    messageId: createMessageId(),
     event: {
       ...event,
       pageUrl: event.pageUrl ?? window.location.href,
       timestamp: event.timestamp ?? Date.now(),
     },
   };
+
+  try {
+    window.dispatchEvent(
+      new CustomEvent(CAPTURED_EVENT_DOM_EVENT, { detail: payload }),
+    );
+  } catch {
+    // Fall back to postMessage if CustomEvent is unavailable or blocked.
+  }
 
   window.postMessage(payload, "*");
 }
@@ -694,23 +658,19 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-function isPostedCapturedEvent(value: unknown): value is PostedCapturedEvent {
-  if (!isRecord(value) || value.source !== SOURCE || !isRecord(value.event)) {
-    return false;
-  }
-
-  const event = value.event;
-  return (
-    (event.type === "log" ||
-      event.type === "network" ||
-      event.type === "error") &&
-    CONSOLE_LEVELS.includes(event.level as ConsoleLevel) &&
-    Array.isArray(event.args) &&
-    typeof event.url === "string" &&
-    typeof event.timestamp === "number"
-  );
+function createMessageId(): string {
+  nextMessageId += 1;
+  return `${Date.now()}:${nextMessageId}`;
 }
 
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
+function setDocumentMarker(attribute: string): void {
+  const setMarker = (): void => {
+    document.documentElement?.setAttribute(attribute, "true");
+  };
+
+  setMarker();
+
+  if (!document.documentElement) {
+    document.addEventListener("DOMContentLoaded", setMarker, { once: true });
+  }
 }

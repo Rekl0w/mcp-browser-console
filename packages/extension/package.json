@@ -1,6 +1,6 @@
 {
   "name": "@mcp-browser-console/extension",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "private": true,
   "description": "Chrome Extension that captures browser console, error, fetch, and XHR events for mcp-browser-console.",
   "type": "module",

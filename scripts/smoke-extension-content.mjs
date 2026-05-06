@@ -3,9 +3,23 @@ import { dirname, resolve } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const rootDir = resolve(dirname(fileURLToPath(import.meta.url)), "..");
-const contentPath = resolve(rootDir, "packages/extension/dist/assets/content.js");
+const contentPath = resolve(
+  rootDir,
+  "packages/extension/dist/assets/content-bridge.js",
+);
 const runtimeMessages = [];
 const messageListeners = [];
+const customEventListeners = [];
+const documentAttributes = new Map();
+
+globalThis.document = {
+  documentElement: {
+    setAttribute(name, value) {
+      documentAttributes.set(name, value);
+    },
+  },
+  addEventListener() {},
+};
 
 const fakeWindow = {
   __MCP_BROWSER_CONSOLE_BRIDGE_INSTALLED__: false,
@@ -16,10 +30,19 @@ const fakeWindow = {
     if (type === "message") {
       messageListeners.push(listener);
     }
+
+    if (type === "mcp-browser-console-event") {
+      customEventListeners.push(listener);
+    }
   },
   dispatchMessage(messageEvent) {
     for (const listener of messageListeners) {
       listener(messageEvent);
+    }
+  },
+  dispatchCustomEvent(detail) {
+    for (const listener of customEventListeners) {
+      listener({ detail });
     }
   },
 };
@@ -41,7 +64,12 @@ await import(`${pathToFileURL(contentPath).href}?t=${Date.now()}`);
 assert.equal(
   fakeWindow.__MCP_BROWSER_CONSOLE_BRIDGE_INSTALLED__,
   true,
-  "content script should install the isolated-world bridge",
+  "content bridge script should install the isolated-world bridge",
+);
+assert.equal(
+  documentAttributes.get("data-mcp-browser-console-bridge-installed"),
+  "true",
+  "content bridge should expose a DOM marker visible from the page world",
 );
 
 const capturedEvent = {
@@ -57,6 +85,7 @@ fakeWindow.dispatchMessage({
   source: { proxy: "main-world-window" },
   data: {
     source: "mcp-browser-console",
+    messageId: "message-smoke",
     event: capturedEvent,
   },
 });
@@ -69,6 +98,24 @@ assert.equal(
 assert.equal(runtimeMessages[0].kind, "mcp-browser-console-event");
 assert.deepEqual(runtimeMessages[0].event, capturedEvent);
 
+const duplicatePayload = {
+  source: "mcp-browser-console",
+  messageId: "duplicate-smoke",
+  event: capturedEvent,
+};
+
+fakeWindow.dispatchCustomEvent(duplicatePayload);
+fakeWindow.dispatchMessage({
+  source: { proxy: "main-world-window" },
+  data: duplicatePayload,
+});
+
+assert.equal(
+  runtimeMessages.length,
+  2,
+  "bridge should dedupe events delivered by both DOM and postMessage channels",
+);
+
 fakeWindow.dispatchMessage({
   source: { proxy: "main-world-window" },
   data: {
@@ -79,7 +126,7 @@ fakeWindow.dispatchMessage({
 
 assert.equal(
   runtimeMessages.length,
-  1,
+  2,
   "bridge should ignore messages without the extension payload marker",
 );
 
