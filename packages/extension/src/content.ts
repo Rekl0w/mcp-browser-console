@@ -86,10 +86,8 @@ function installBridge(): void {
   window.addEventListener(
     "message",
     (messageEvent: MessageEvent<unknown>) => {
-      if (
-        messageEvent.source !== window ||
-        !isPostedCapturedEvent(messageEvent.data)
-      ) {
+      // MAIN and ISOLATED worlds can expose different WindowProxy wrappers.
+      if (!isPostedCapturedEvent(messageEvent.data)) {
         return;
       }
 

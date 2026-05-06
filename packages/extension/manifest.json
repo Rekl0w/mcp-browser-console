@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "MCP Browser Console",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Streams console, error, fetch, and XHR events from web pages to a local MCP server.",
   "minimum_chrome_version": "114",
   "icons": {
